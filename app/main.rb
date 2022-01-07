@@ -33,3 +33,25 @@ def tick args
 
   args.state.monster.tick args
 end
+
+#TODO
+# Monster states
+# Monster transformations
+# Monster Sprite Sheets
+# Monster stats -> states
+#   Happy
+#   Normal
+#   Hungry
+#   Playful
+# Activities to interact with monster
+#   Pet
+#   Feed
+#   Play
+#   Watch
+# Theming/Skinning of application
+#   Background Color
+#   Background Pattern
+#   Frame Color
+#   Font
+#   Font Color
+#
