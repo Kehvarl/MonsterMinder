@@ -21,9 +21,6 @@ class Monster
   end
 
   def tick args
-    if args.inputs.mouse.click
-      click
-    end
     args.outputs.sprites << [@x, @y, @size, @size, sprite]
   end
 end
@@ -73,7 +70,9 @@ def tick args
   args.state.button.render args
 
   if args.inputs.mouse.click or args.inputs.mouse.down
+
     if args.state.button.clicked? args
+      args.state.monster.click
       args.state.button.render_pressed args
     end
   end
