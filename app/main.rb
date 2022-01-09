@@ -1,27 +1,57 @@
 class Monster
-  def initialize x, y
-    @sprites = ['sprites/circle/red.png', 'sprites/circle/orange.png', 'sprites/circle/yellow.png',
-                'sprites/circle/green.png', 'sprites/circle/blue.png', 'sprites/circle/indigo.png',
-                'sprites/circle/violet.png', 'sprites/hexagon/indigo.png', 'sprites/hexagon/blue.png']
-    @current = 0
-    @x = x
-    @y = y
-    @size = 16
+  def initialize type
+    @type = type
+    @level = 0
+    @happiness = 128
+    @tiredness = 0
+    @sleep_time = -1
 
-    def sprite
-      @sprites[@current]
+    def play
+      if @tiredness < 100 and @sleep_time == -1
+        @happiness += rand(10)
+        @tiredness += 5
+      end
     end
-  end
 
-  def click
-    @size += 1
-    if rand(10) >= 9
-      @current += 1
+    def sleep
+      if @sleep_time == -1
+        @sleep_time = 20
+      end
     end
-  end
 
-  def tick args
-    args.outputs.sprites << [@x, @y, @size, @size, sprite]
+    def render args
+      x = 0
+      y = 700
+      args.outputs.labels <<[x, y, @type]
+      args.outputs.labels <<[x, y - 20, "Happiness: #{@happiness}"]
+      args.outputs.labels <<[x, y - 40, "Tiredness: #{@tiredness}"]
+
+      w,h = args.gtk.calcstringbox("Play", 1)
+      args.outputs.borders << [x, y - 60 - h, w, h, 0, 0, 0]
+      args.outputs.labels << [x + (w/2), y - 60 - h + h -2, "Play", 1, 1]
+
+      w,h = args.gtk.calcstringbox("Sleep", 1)
+      args.outputs.borders << [x + w + 5, y - 60 - h, w, h, 0, 0, 0]
+      args.outputs.labels << [x + w + 5 + (w/2), y - 60 - h + h -2, "Sleep", 1, 1]
+
+    end
+
+    def tick
+      if @sleep_time > -1
+        @sleep_time -=5
+        if @sleep_time <= 0
+          @tiredness = 0
+          @sleep_time = -1
+        end
+      else
+        @happiness -= rand(3)
+        @tiredness += rand(2)
+
+        if @tiredness >= 20
+          sleep
+        end
+      end
+    end
   end
 end
 
@@ -63,16 +93,23 @@ class Button
 end
 
 def tick args
-  args.state.monster ||= Monster.new(64, 64)
+  args.state.monster ||= Monster.new("Test")
   args.state.button ||= Button.new(128, 64, 128, 128, 128, "Test", 0, 0, 0, args)
+  args.state.turn_timer ||= 30
 
-  args.state.monster.tick args
+  args.state.turn_timer -= 1
+  if args.state.turn_timer <= 0
+    args.state.turn_timer = 30
+    args.state.monster.tick
+  end
+
+  args.state.monster.render args
   args.state.button.render args
 
   if args.inputs.mouse.click or args.inputs.mouse.down
 
     if args.state.button.clicked? args
-      args.state.monster.click
+      args.state.monster.play
       args.state.button.render_pressed args
     end
   end
