@@ -1,5 +1,7 @@
 class Monster
-  def initialize type
+  def initialize x, y, type
+    @x = x
+    @y = y
     @type = type
     @level = 0
     @happiness = 128
@@ -20,19 +22,20 @@ class Monster
     end
 
     def render args
-      x = 0
-      y = 700
+      x, y = @x, @y
       args.outputs.labels <<[x, y, @type]
-      args.outputs.labels <<[x, y - 20, "Happiness: #{@happiness}"]
-      args.outputs.labels <<[x, y - 40, "Tiredness: #{@tiredness}"]
-
+      y -= 20
+      args.outputs.labels <<[x, y, "Happiness: #{@happiness}"]
+      y -= 20
+      args.outputs.labels <<[x, y, "Tiredness: #{@tiredness}"]
+      y -= 20
       w,h = args.gtk.calcstringbox("Play", 1)
-      args.outputs.borders << [x, y - 60 - h, w, h, 0, 0, 0]
-      args.outputs.labels << [x + (w/2), y - 60 - h + h -2, "Play", 1, 1]
+      args.outputs.labels << [x + (w/2) + 5, y - h + h -2, "Play", 1, 1]
+      args.outputs.borders << [x, y - h, w+5, h, 0, 0, 0]
 
       w,h = args.gtk.calcstringbox("Sleep", 1)
-      args.outputs.borders << [x + w + 5, y - 60 - h, w, h, 0, 0, 0]
-      args.outputs.labels << [x + w + 5 + (w/2), y - 60 - h + h -2, "Sleep", 1, 1]
+      args.outputs.labels << [x + w + 10 + (w/2), y - h + h -2, "Sleep", 1, 1]
+      args.outputs.borders << [x + w + 5, y - h, w+10, h, 0, 0, 0]
 
     end
 
@@ -93,7 +96,7 @@ class Button
 end
 
 def tick args
-  args.state.monster ||= Monster.new("Test")
+  args.state.monster ||= Monster.new(10, 700, "Test")
   args.state.button ||= Button.new(128, 64, 128, 128, 128, "Test", 0, 0, 0, args)
   args.state.turn_timer ||= 30
 
