@@ -60,8 +60,8 @@ class Monster
     @happiness = 128
     @tiredness = 0
     @sleep_time = -1
-    @play = Button.new(10, y-100, "Play")
-    @sleep = Button.new(70, y-100, "Sleep")
+    @play = Button.new(@x + 10, y-100, "Play")
+    @sleep = Button.new(@x + 70, y-100, "Sleep")
   end
 
   def play
@@ -118,15 +118,18 @@ end
 
 def tick args
   args.state.monster ||= Monster.new(10, 700, "Test")
+  args.state.monster2 ||= Monster.new(200, 700, "Test")
   args.state.turn_timer ||= 30
 
   args.state.turn_timer -= 1
   if args.state.turn_timer <= 0
     args.state.turn_timer = 30
     args.state.monster.tick args
+    args.state.monster2.tick args
   end
 
   args.state.monster.render args
+  args.state.monster2.render args
 
 end
 
