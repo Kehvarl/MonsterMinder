@@ -60,8 +60,13 @@ class Monster
     @happiness = 128
     @tiredness = 0
     @sleep_time = -1
+    @ticks = 20
     @play = Button.new(@x + 10, y-100, "Play")
     @sleep = Button.new(@x + 70, y-100, "Sleep")
+  end
+
+  def awake?
+    @sleep_time <= -1
   end
 
   def play
@@ -72,14 +77,14 @@ class Monster
   end
 
   def sleep
-    if @sleep_time == -1
+    if awake?
       @sleep_time = 20
     end
   end
 
   def render args
     x, y = @x, @y
-    args.outputs.labels <<[x, y, @type]
+    args.outputs.labels <<[x, y, "#{@type} is #{awake? ? 'Awake' : 'Sleeping'}"]
     y -= 20
     args.outputs.labels <<[x, y, "Happiness: #{@happiness}"]
     y -= 20
@@ -90,7 +95,29 @@ class Monster
   end
 
   def tick args
-    if @sleep_time > -1
+    @ticks -= 1
+    if @ticks <= 0
+      @ticks = 20
+      action args
+    end
+
+    if awake?
+      if @play.click(args)
+        play
+      end
+
+      if @sleep.click(args)
+        sleep
+      end
+
+      if @tiredness >= 20
+        sleep
+      end
+    end
+  end
+
+  def action args
+    if not awake?
       @sleep_time -=5
       if @sleep_time <= 0
         @tiredness = 0
@@ -100,17 +127,6 @@ class Monster
       @happiness -= rand(3)
       @tiredness += rand(2)
 
-      if @tiredness >= 20
-        sleep
-      end
-    end
-
-    if @play.click(args)
-      play
-    end
-
-    if @sleep.click(args)
-      sleep
     end
   end
 end
