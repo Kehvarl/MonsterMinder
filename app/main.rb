@@ -18,13 +18,37 @@ class Button
   end
 
   def render_normal args
-    @w, @h = args.gtk.calcstringbox(@text, 2)
-    @w += 8
-    @h += 4
+    w, h = args.gtk.calcstringbox(@text, 2)
+    w += 8
+    h += 4
+    args.outputs[:scene].w = w
+    args.outputs[:scene].h = h
 
-    args.outputs.solids << [@x, @y, @w, @h, 128, 128, 128]
-    args.outputs.borders << [@x, @y, @w, @h, 0, 0, 0]
-    args.outputs.labels << [@x + (@w/2), @y + @h -2, @text, 2, 1, 0, 0, 0]
+    # make the background transparent
+    args.outputs[:scene].background_color = [255, 255, 255, 0]
+
+    # set the blendmode of the label to 0 (no blending)
+    # center it inside of the scene
+    # set the vertical_alignment_enum to 1 (center)
+    args.outputs[:scene].labels  << { x: 0,
+                                      y: 15,
+                                      text: @text,
+                                      blendmode_enum: 0,
+                                      vertical_alignment_enum: 1 }
+
+    # add a border to the render target
+    args.outputs[:scene].borders << { x: 0,
+                                      y: 0,
+                                      w: args.outputs[:scene].w,
+                                      h: args.outputs[:scene].h }
+
+    # add the rendertarget to the main output as a sprite
+    args.outputs.sprites << { x: @x,
+                              y: @y,
+                              w: args.outputs[:scene].w,
+                              h: args.outputs[:scene].h,
+                              path: :scene }
+
   end
 
   def render_pressed args
@@ -60,7 +84,7 @@ class Monster
     @happiness = 128
     @tiredness = 0
     @sleep_time = -1
-    @ticks = 20
+    @ticks = 100
     @play = Button.new(@x + 10, y-100, "Play")
     @sleep = Button.new(@x + 70, y-100, "Sleep")
   end
@@ -97,7 +121,7 @@ class Monster
   def tick args
     @ticks -= 1
     if @ticks <= 0
-      @ticks = 20
+      @ticks = 100
       action args
     end
 
@@ -139,7 +163,7 @@ def tick args
 
   args.state.turn_timer -= 1
   if args.state.turn_timer <= 0
-    args.state.turn_timer = 30
+    args.state.turn_timer = 1
     args.state.monster.tick args
     args.state.monster2.tick args
   end
