@@ -1,5 +1,6 @@
 class Button
   def initialize x, y, text
+    @name = "#{x}#{text}"
     @x = x
     @y = y
     @w = 5
@@ -21,44 +22,70 @@ class Button
     w, h = args.gtk.calcstringbox(@text, 2)
     w += 8
     h += 4
-    args.outputs[:scene].w = w
-    args.outputs[:scene].h = h
+    args.outputs[@name].w = w
+    args.outputs[@name].h = h
 
     # make the background transparent
-    args.outputs[:scene].background_color = [255, 255, 255, 0]
+    args.outputs[@name].background_color = [128, 128, 128, 255]
 
     # set the blendmode of the label to 0 (no blending)
     # center it inside of the scene
     # set the vertical_alignment_enum to 1 (center)
-    args.outputs[:scene].labels  << { x: 0,
-                                      y: 15,
+    args.outputs[@name].labels  << {  x: 6,
+                                      y: 14,
                                       text: @text,
-                                      blendmode_enum: 0,
+                                      blendmode_enum: 1,
                                       vertical_alignment_enum: 1 }
 
     # add a border to the render target
-    args.outputs[:scene].borders << { x: 0,
+    args.outputs[@name].borders << { x: 0,
                                       y: 0,
-                                      w: args.outputs[:scene].w,
-                                      h: args.outputs[:scene].h }
+                                      w: args.outputs[@name].w,
+                                      h: args.outputs[@name].h }
 
     # add the rendertarget to the main output as a sprite
     args.outputs.sprites << { x: @x,
                               y: @y,
-                              w: args.outputs[:scene].w,
-                              h: args.outputs[:scene].h,
-                              path: :scene }
+                              w: args.outputs[@name].w,
+                              h: args.outputs[@name].h,
+                              angle: 0,
+                              path: @name }
 
   end
 
   def render_pressed args
-    @w, @h = args.gtk.calcstringbox(@text, 2)
-    @w += 8
-    @h += 4
+    w, h = args.gtk.calcstringbox(@text, 2)
+    w += 8
+    h += 4
+    args.outputs[@name].w = w
+    args.outputs[@name].h = h
 
-    args.outputs.solids << [@x, @y, @w, @h, 255, 255, 255]
-    args.outputs.borders << [@x, @y, @w, @h, 0, 0, 0]
-    args.outputs.labels << [@x + (@w/2), @y + @h -2, @text, 2, 1, 0, 0, 0]
+    # make the background transparent
+    args.outputs[@name].background_color = [255, 255, 255, 255]
+
+    # set the blendmode of the label to 0 (no blending)
+    # center it inside of the scene
+    # set the vertical_alignment_enum to 1 (center)
+    args.outputs[@name].labels  << {  x: 6,
+                                      y: 14,
+                                      text: @text,
+                                      blendmode_enum: 1,
+                                      vertical_alignment_enum: 1 }
+
+    # add a border to the render target
+    args.outputs[@name].borders << { x: 0,
+                                     y: 0,
+                                     w: args.outputs[@name].w,
+                                     h: args.outputs[@name].h }
+
+    # add the rendertarget to the main output as a sprite
+    args.outputs.sprites << { x: @x,
+                              y: @y,
+                              w: args.outputs[@name].w,
+                              h: args.outputs[@name].h,
+                              angle: 0,
+                              path: @name }
+
   end
 
   def click args
