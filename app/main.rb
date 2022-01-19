@@ -19,9 +19,11 @@ class Button
   end
 
   def render_normal args
-    w, h = args.gtk.calcstringbox(@text, 2)
-    w += 8
-    h += 4
+    @w, @h = args.gtk.calcstringbox(@text, 2)
+    @w += 8
+    @h += 4
+    w, h = @w, @h
+
     args.outputs[@name].w = w
     args.outputs[@name].h = h
 
@@ -54,37 +56,39 @@ class Button
   end
 
   def render_pressed args
-    w, h = args.gtk.calcstringbox(@text, 2)
-    w += 8
-    h += 4
-    args.outputs[@name].w = w
-    args.outputs[@name].h = h
+    name = "#{@name}-pressed"
+    @w, @h = args.gtk.calcstringbox(@text, 2)
+    @w += 8
+    @h += 4
+    w, h = @w, @h
+    args.outputs[name].w = w
+    args.outputs[name].h = h
 
     # make the background transparent
-    args.outputs[@name].background_color = [255, 255, 255, 255]
+    args.outputs[name].background_color = [255, 255, 255, 255]
 
     # set the blendmode of the label to 0 (no blending)
     # center it inside of the scene
     # set the vertical_alignment_enum to 1 (center)
-    args.outputs[@name].labels  << {  x: 6,
+    args.outputs[name].labels  << {  x: 6,
                                       y: 14,
                                       text: @text,
                                       blendmode_enum: 1,
                                       vertical_alignment_enum: 1 }
 
     # add a border to the render target
-    args.outputs[@name].borders << { x: 0,
+    args.outputs[name].borders << { x: 0,
                                      y: 0,
-                                     w: args.outputs[@name].w,
-                                     h: args.outputs[@name].h }
+                                     w: args.outputs[name].w,
+                                     h: args.outputs[name].h }
 
     # add the rendertarget to the main output as a sprite
     args.outputs.sprites << { x: @x,
                               y: @y,
-                              w: args.outputs[@name].w,
-                              h: args.outputs[@name].h,
+                              w: args.outputs[name].w,
+                              h: args.outputs[name].h,
                               angle: 0,
-                              path: @name }
+                              path: name }
 
   end
 
