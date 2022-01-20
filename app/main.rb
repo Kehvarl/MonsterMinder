@@ -189,7 +189,7 @@ end
 
 def tick args
   args.state.monster ||= Monster.new(10, 700, "Test")
-  args.state.monster2 ||= Monster.new(200, 700, "Test")
+  args.state.monster2 ||= Monster.new(200, 700, "Other")
   args.state.turn_timer ||= 30
 
   args.state.turn_timer -= 1
