@@ -226,6 +226,3 @@ end
 #   Font
 #   Font Color
 #
-# Daily 2022-01-20
-# Daily 2022-01-21
-# Daily 2022-01-22
