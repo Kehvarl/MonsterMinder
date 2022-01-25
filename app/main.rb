@@ -225,4 +225,3 @@ end
 #   Frame Color
 #   Font
 #   Font Color
-#
